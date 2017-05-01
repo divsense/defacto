@@ -1,0 +1,28 @@
+{
+  "author": "haknick <info@divsense.com> (divsense.com)",
+  "contributors": [
+    {"name": "haknick"}
+  ],
+  "name": "defacto",
+  "description": "Actors language definitions for Divsense",
+  "version": "0.1.0",
+  "homepage": "https://www.github.com/divsense/defacto",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/divsense/defacto.git"
+  },
+  "scripts": {
+    "build": "webpack --env build",
+    "dev": "webpack --progress --colors --watch --env dev",
+    "_test": "mocha --compilers js:babel-core/register --colors ./test/*.spec.js",
+  },
+  "dependencies": {
+    "ramda": "~0.23.0"
+  },
+  "devDependencies": {
+    "eslint": "3.19.0",
+    "eslint-loader": "1.7.1",
+    "mocha": "3.3.0",
+    "webpack": "2.4.1",
+  }
+}
