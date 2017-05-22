@@ -1,4 +1,11 @@
 ## Defacto Detailed Docs Coming Soon ...
 
 
-Aaaalsdf; Asd;flajsdfFFFlk ;alsdkfjasd f. Super awesome. It's incredible.
+Defacto makes it easy to work with the Actor Language Definition in Divsense.
+
+It has these area of focus for now:
+
+- Keynode
+- Parse
+- Template
+- Choice
