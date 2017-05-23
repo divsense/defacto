@@ -12,9 +12,10 @@
     "url": "git://github.com/divsense/defacto.git"
   },
   "scripts": {
-    "build": "webpack --env build",
-    "dev": "webpack --progress --colors --watch --env dev",
-    "_test": "mocha --compilers js:babel-core/register --colors ./test/*.spec.js",
+    "dev": "webpack --config webpack.config.js",
+    "_watch": "webpack --progress --colors --watch --env dev",
+    "prod": "webpack --config webpack.config.js",
+    "test": "ava test"
   },
   "dependencies": {
     "ramda": "~0.23.0"
@@ -22,8 +23,8 @@
   "devDependencies": {
     "eslint": "3.19.0",
     "eslint-loader": "1.7.1",
-    "mocha": "3.3.0",
-    "webpack": "2.4.1",
+    "ava": "0.19.1",
+    "jsdoc": "^3.4.3",
+    "webpack": "2.6.0"
   }
 }
-=========

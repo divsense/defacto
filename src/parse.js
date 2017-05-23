@@ -1,4 +1,4 @@
-const _kot = require('./_kot');
+import _kot from 'internal/_kot';
 
 
 /**

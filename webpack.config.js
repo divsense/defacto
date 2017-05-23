@@ -19,19 +19,14 @@ const config = {
     loaders: [
       /*{
         test: /(\.js)$/,
-        loader: 'babel',
-        exclude: /(node_modules)/
-      },*/
-      {
-        test: /(\.js)$/,
         loader: "eslint-loader",
         exclude: /node_modules/
-      }
+      }*/
     ]
   },
   resolve: {
-    root: path.resolve('./src'),
-    extensions: ['', '.js']
+    modules: ["src"],
+    extensions: ['.js']
   }
 };
 

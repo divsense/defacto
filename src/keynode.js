@@ -1,5 +1,4 @@
-
-const _kot = require('./_kot');
+import _kot from 'internal/_kot';
 
 
 /**
@@ -23,6 +22,6 @@ const _kot = require('./_kot');
  *      //returns true
  *
  */
-export default function(node-text, keynodes){
+export default function(nodeText, keynodes){
   return _kot('parsing');
 };            

@@ -8,7 +8,10 @@
  * 
  */
 
-export {default as choice} from './choice'
-export {default as keynode} from './keynode
-export {default as parse} from './parse'
-export {default as template} from './template'
+export {default as choice} from   './choice';
+export {default as keynode} from  './keynode';
+export {default as parse} from    './parse';
+export {default as template} from './template';
+export {default as style} from    './style';
+
+
