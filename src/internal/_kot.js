@@ -9,5 +9,5 @@
  */
 
 export default function(value){
-    return value + '_kot';
+  return value + '_kot';
 }

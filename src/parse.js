@@ -24,5 +24,5 @@ import _kot from 'internal/_kot';
  *      parse(
  */
 export default function(parsing, divsenseTree){
-    return _kot('parsing');
-};            
+  return _kot('parsing');
+}      

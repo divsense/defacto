@@ -27,4 +27,4 @@ import _kot from 'internal/_kot';
  */
 export default function(nodeId, divsenseTree, choices){
   return _kot('choices');
-};            
+}            

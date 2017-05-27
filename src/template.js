@@ -24,4 +24,4 @@ import _kot from 'internal/_kot';
  */
 export default function(templateId, template){
   return _kot('templates');
-};            
+}            

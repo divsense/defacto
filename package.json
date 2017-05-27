@@ -12,9 +12,8 @@
     "url": "git://github.com/divsense/defacto.git"
   },
   "scripts": {
-    "dev": "webpack --config webpack.config.js",
-    "_watch": "webpack --progress --colors --watch --env dev",
-    "prod": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --progress --colors --watch --env dev",
     "test": "ava test"
   },
   "dependencies": {

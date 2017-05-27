@@ -17,11 +17,17 @@ const config = {
   },
   module: {
     loaders: [
-      /*{
+      {
+        enforce: "pre",
         test: /(\.js)$/,
         loader: "eslint-loader",
-        exclude: /node_modules/
-      }*/
+        exclude: /node_modules/,
+        options: {
+          quiet:true
+          //useESlintrc:false,
+          //rules: { indent: ['error', 2] }
+        }
+      }
     ]
   },
   resolve: {
