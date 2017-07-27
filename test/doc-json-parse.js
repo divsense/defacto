@@ -2,7 +2,7 @@
 //var async = require('async');
 var nsf = require('../src/internal/tst.js');
 var compose = require('lodash.compose');
-var parser = require('../grammars/parser-json.js');
+var parser = require('./parser-json.js');
 
 // var host = process.argv[2];
 
@@ -15,7 +15,7 @@ var parser = require('../grammars/parser-json.js');
 
 // request = request('http://' + host + ":8080");
 
-// var ALIEN_DOC_ID = "doc1234";
+ var ALIEN_DOC_ID = "doc1234";
 // var ALIEN_PURS_ID = "purs1234";
 // var ALIEN_DOC_HTML_ID = "doc-html-1234"
 // var ALIEN_HTML_ID = "html1234";
