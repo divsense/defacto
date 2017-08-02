@@ -145,63 +145,6 @@ var setChildNodes = function( parentId, cids, side, branchName ){
   }
 }
 
-exports.LEVEL_ORDER = LEVEL_ORDER;
-exports.DEPTH_FIRST = DEPTH_FIRST;
-
-exports.traverse = function( data, options, callback ){
-
-  var level = 0;
-
-  if( !callback ){ return }
-
-  options = options || {};
-
-  var order = options.order || NO_ORDER;
-
-  if( Array.isArray( data ) ){
-
-    if( order === LEVEL_ORDER ){
-      for(var i = 0; i < data.length; i++ ){
-        if( !data[i].p ){
-          if( callback( null, data[i], 0 ) ){
-            return;
-          }
-        }
-      }
-      for(var i = 0; i < data.length; i++ ){
-        if( !data[i].p ){
-          traverseLevelOrder( data[i], data, options, 1, callback );
-        }
-      }
-    }
-    else if( order === DEPTH_FIRST ){
-      for(var i = 0; i < data.length; i++ ){
-        if( !data[i].p ){
-          if( options.pass && isOpt( data[i], options, "pass" ) ){
-            res = traverseDepthFirst( data[i], data, options, 0, callback );
-          }
-          else if( !options.take || isOpt( data[i], options, "take" ) ){
-            if( !callback( null, data[i], level ) ){
-              traverseDepthFirst( data[i], data, options, 1, callback );
-            }
-          }
-        }
-      }
-    }
-    else{ // no order
-      for(var i = 0; i < data.length; i++ ){
-        if( callback( null, data[i] ) ){
-          break;
-        }
-      }
-    }
-  }
-  else{
-    callback("Array expected");
-  }
-
-}
-
 exports.findIndex = function( data, options ){
 
   if( Array.isArray( data ) ){

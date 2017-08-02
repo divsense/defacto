@@ -17,7 +17,9 @@
     "test": "ava test"
   },
   "dependencies": {
-    "ramda": "~0.23.0"
+      "ramda": "~0.23.0",
+      "lodash.compose": "^2.4.1",
+      "lodash.find": "^2.4.1"
   },
   "devDependencies": {
     "eslint": "3.19.0",
