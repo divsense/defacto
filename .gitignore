@@ -1,5 +1,9 @@
 *~
+
 .*.swp
+
 node_modules
 
 temp.js
+
+.tern-port
