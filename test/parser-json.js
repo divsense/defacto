@@ -3,8 +3,8 @@
    Convert a Divsense map to a json file
 */
 
-exports.parse = function(nsf, src){
-    let mMap = nsf.mmapToMap(src);
+exports.parse = function(tst, src){
+    let mMap = tst.mmapToMap(src);
     
     // for now use text to decide node type. could use an actual type property later
     // nodes for xml are either attributes, text or element
@@ -99,7 +99,7 @@ exports.parse = function(nsf, src){
         }
     }
 
-    let state_machine = nsf.stateMachine(states, node_type);
+    let state_machine = tst.stateMachine(states, node_type);
 
     // this gets called at each traversal step
     let prep_call = (node, fromParent) => {
@@ -113,15 +113,15 @@ exports.parse = function(nsf, src){
     // this gets called after the children of this node finally have a computed value which was passed to this function
     let compute_call = (node, fromParent, fromPrep, siblings_computed, children_computed) => {
         // only items array is really needed and each parent will decide how to reduce it
-        let siblings = nsf.ensureAll(siblings_computed, ['items'], []);
-        let children = nsf.ensureAll(children_computed, ['items'], []);
+        let siblings = tst.ensureAll(siblings_computed, ['items'], []);
+        let children = tst.ensureAll(children_computed, ['items'], []);
 
         return computations[fromPrep.state](node, fromParent, fromPrep, siblings, children)
     };
       
     // The callback's return value will be used to be passed along to the node's children, so information that the
     // children need about this node, should be returned from the callback function
-    var out = nsf.traversePure(src, prep_call, compute_call);
+    var out = tst.traversePure(src, prep_call, compute_call);
 
     return out.items[0];
 

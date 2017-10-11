@@ -1,36 +1,10 @@
-//var request = require('supertest');
-//var async = require('async');
-var nsf = require('../src/internal/tst.js');
-var compose = require('lodash.compose');
-var parser = require('./parser-json.js');
 
-// var host = process.argv[2];
+const nsf = require('../src/internal/nsf.js');
+const tst = require('../src/internal/tst.js');
+const compose = require('lodash.compose');
+const parser = require('./parser-json.js');
 
-// if( !host ){
-
-// 	process.stderr.write("Host parameter required");
-// 	process.exit(9);
-
-// }
-
-// request = request('http://' + host + ":8080");
-
- var ALIEN_DOC_ID = "doc1234";
-// var ALIEN_PURS_ID = "purs1234";
-// var ALIEN_DOC_HTML_ID = "doc-html-1234"
-// var ALIEN_HTML_ID = "html1234";
-
-var doc_src = compose(
-    nsf.makeNode("434", { t: "main = log \"Hello, World!\"\n", u: {type:"text"}})
-    , nsf.makeNode("433", { t: "import Control.Monad.Eff.Console\n", u: {type:"text"}})
-    , nsf.makeNode("422", { t: "module Main where\n", u: {dtype:"text"}})
-)();
-
-var purs_src = compose(
-    nsf.makeNode( ALIEN_DOC_ID, { t: "main.purs", u: {type:"doc", alien: "divsense/doc"}})
-)();
-
-var doc_html_src = compose(
+const doc_html_src = compose(
     nsf.setChildNodes("111", ["112", "125"])
     , nsf.setChildNodes("112", ["113", "115"])
     , nsf.setChildNodes("113", ["114"])
@@ -79,8 +53,8 @@ var doc_html_src = compose(
 
 )();
 
-var doc_html_src_ord = doc_html_src.reverse();
+const doc_html_src_ord = doc_html_src.reverse();
 //console.log(JSON.stringify(doc_html_src_ord, null, 2))
-var json = parser.parse(nsf, doc_html_src_ord);
+const json = parser.parse(tst, doc_html_src_ord);
 
 console.log(JSON.stringify(json, null, 4))

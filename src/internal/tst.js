@@ -1,197 +1,31 @@
-//
-// Divsense Nodes Storage Format
-//
-var find = require("lodash.find");
+const nsf = require('./nsf.js');
 
-var BRANCH_CLASS = 0;
-var BRANCH_NODES = 1;
-var BRANCH_ID = 2;
-
-var NO_ORDER = 0;
-var LEVEL_ORDER = 1;
-var DEPTH_FIRST = 2;
-
-var isProp = function( node_props, filter_props ){
-
-  if( node_props && filter_props ){
-    return node_props.some(function(a){
-      var p =  filter_props[ a[0] ];
-      return ( p && p[ a[1] ] );
-    });
-  }
-
-  return false;
-}
-
-var isOpt = function( node, opt, prop ){
-  return isProp( node.u, opt[prop].u ) || isProp( node.k, opt[prop].k );
-}
-
-var findById = function( data ){
-  return function( id ){
-    for(var i = 0; i < data.length; i++ ){
-      if( data[i]._id === id ){
-        return data[i];
-      }
-    }
-  }
-}
-
-// This traverses the Array every time it needs to find something.
-// @todo build similar using fastFind
-var childNodes = function( node, data ){
-
-  return ( (node.a || [] ).concat( (node.b || []) ) )
-      .reduce( function(m,b){
-        return m.concat( b[1] );
-      }, [])
-      .map( findById(data) );
-
-}
-
-var traverseLevelOrder = function( root, data, options, level, callback ){
-
-  var chs = childNodes( root, data );
-
-  var res = chs.some( function(n){
-    return !!callback( null, n, level );
-  });
-
-  if( !res ){
-    res = chs.some( function(n){
-      return traverseLevelOrder( n, data, options, (level + 1), callback );
-    });
-  }
-
-  return res;
-d}
-
-var traverseDepthFirst = function( root, data, options, level, callback ){
-
-  var chs = childNodes( root, data );
-
-  return chs.some( function(n){
-
-    var res, ll;
-
-    if( options.pass && isOpt( n, options, "pass" ) ){
-      res = traverseDepthFirst( n, data, options, level, callback );
-    }
-    else if( !options.take || isOpt( n, options, "take" ) ){
-      if( !callback( null, n, level ) ){
-        res = traverseDepthFirst( n, data, options, level + 1, callback );
-      }
-    }
-
-    return res;
-
-  });
+/** ===== This represents a "Transformative State Tree" =====
+ * These functions are mostly pure. They transform the tree based on state transitions
+ *  without storing state but only passing it forward
+ * Parents can pass data and their state defined in prep_call to children.
+ * Siblings compute based on state and can pass computed values to the next sibling via compute_call.
+ * When all siblings are done, the final computed value gets returned to parent,
+ *  which uses it for its own computation.  */
 
 
-}
-
-var props = function( obj ){
-  return Object.keys( obj ).reduce(function(m,a){
-    m.push( [ a, obj[ a ] ] );
-    return m;
-  }, []);
-}
-
-var makeNode = function( id, params ){
-
-  return function(set){
-
-    set = set || [];
-
-    var s = {_id: id};
-
-    if( params.t ) s.t = params.t;
-
-    if( params.u ) s.u = props( params.u );
-
-    if( params.k ) s.k = props( params.k );
-
-    set.push( s );
-    return set;
-  }
-}
-
-var setChildNodes = function( parentId, cids, side, branchName ){
-
-  return function(set){
-
-    side = side || "a";
-    branchName = branchName || "children-mmap";
-
-    var node = find( set, function(e){return e._id === parentId});
-
-    if( node ){
-
-      node[ side ] = node[ side ] || [];
-
-      node[ side ].push( [ branchName, cids] );
-
-      cids.forEach( function(id){
-
-        var node = find( set, function(e){return e._id === id});
-        if( node ){
-          node.p = parentId;
-        }
-
-      });
-    }
-
-    return set;
-  }
-}
-
-exports.findIndex = function( data, options ){
-
-  if( Array.isArray( data ) ){
-    if( options.byId ){
-      for(var i = 0; i < data.length; i++ ){
-        if( data[i]._id === options.byId ){
-          return i;
-        }
-      }
-    }
-  }
-}
-
-exports.has = function( key, value, prop ){
-  return prop.some( function(p){ return (p[0] === key && p[1] === value); });
-}
-
-exports.childNodes = childNodes;
-
-exports.makeNode = makeNode;
-exports.setChildNodes = setChildNodes;
-
-
-
-
-// ------------------ EXTENDED Functions ------------------
-
-
-// This is a "Transformative State Tree"
-// This function is mostly pure. It transforms the tree based on state transitions
-// Parents can pass data and their state defined in prep_call to children.
-// Siblings compute based on state and can pass computed values to the next sibling via compute_call.
-// When all siblings are done, the final computed value gets returned to parent which uses it for its own computation.
-const traverseDepthPure = function( root, data, fromParent, prep_call, compute_call){
-    var chs = childNodes( root, data );
+/** @TODO write up
+ * @sig DSNode a => a -> b -> a -> c -> d -> e  */
+const traverseDepthPure = (root, data, fromParent, prep_call, compute_call) => {
+    const chs = nsf.childNodes(root, data);
     return chs.reduce( function(siblings_computed, node, i){
         return prepTraverseCompute(node, data, siblings_computed, fromParent, prep_call, compute_call);
     }, null);
-}
+};
+
 const prepTraverseCompute = function(node, data, siblings_computed, fromParent, prep_call, compute_call){
-    var prepRes = prep_call(node, fromParent)
+    const prepRes = prep_call(node, fromParent);
     if(prepRes === fromParent)
         throw new Error("Do not mutate fromParent inside of 'prep_call' and create " +
                         "a new object instead. Otherwise parent's next state won't " +
                         "be transitioned properly");
 
-    var children_computed = traverseDepthPure( node, data, prepRes, prep_call, compute_call );
+    const children_computed = traverseDepthPure( node, data, prepRes, prep_call, compute_call );
 
     return compute_call(node, fromParent, prepRes, siblings_computed, children_computed);
 }
