@@ -1,17 +1,17 @@
 // Setup webpack.config.js
-const libraryName = 'defacto';
-
 const webpack = require('webpack');
 const path = require('path');
-const outputFile = libraryName + '.js';
 
 const config = {
-  entry: __dirname + '/src/index.js',
+  entry: {
+    defacto    : "./src/index.js",
+    defactoInternal: "./src/internal/index.js"
+  },
   devtool: 'source-map',
   output: {
-    path: __dirname + '/lib',
-    filename: outputFile,
-    library: libraryName,
+    path: path.join(__dirname, "lib"),
+    filename: "[name].js",
+    library: ["[name]"],
     libraryTarget: 'umd',
     umdNamedDefine: true
   },

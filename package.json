@@ -22,7 +22,7 @@
       "lodash.find": "^2.4.1"
   },
   "devDependencies": {
-    "eslint": "3.19.0",
+    "eslint": "4.9.0",
     "eslint-loader": "1.7.1",
     "ava": "0.19.1",
     "jsdoc": "^3.4.3",

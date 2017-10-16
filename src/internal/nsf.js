@@ -1,9 +1,7 @@
 //
 // Divsense Nodes Storage Format
 //
-var find = require("lodash.find");
-
-
+const find = require("lodash.find");
 
 
 var BRANCH_CLASS = 0;
@@ -24,11 +22,11 @@ var isProp = function( node_props, filter_props ){
   }
 
   return false;
-}
+};
 
 var isOpt = function( node, opt, prop ){
   return isProp( node.u, opt[prop].u ) || isProp( node.k, opt[prop].k );
-}
+};
 
 var findById = function( data ){
   return function( id ){
@@ -37,20 +35,20 @@ var findById = function( data ){
         return data[i];
       }
     }
-  }
-}
+  };
+};
 
 // This traverses the Array every time it needs to find something.
 // @todo build similar using fastFind
 var childNodes = function( node, data ){
 
   return ( (node.a || [] ).concat( (node.b || []) ) )
-      .reduce( function(m,b){
-        return m.concat( b[1] );
-      }, [])
-      .map( findById(data) );
+    .reduce( function(m,b){
+      return m.concat( b[1] );
+    }, [])
+    .map( findById(data) );
 
-}
+};
 
 var traverseLevelOrder = function( root, data, options, level, callback ){
 
@@ -67,7 +65,7 @@ var traverseLevelOrder = function( root, data, options, level, callback ){
   }
 
   return res;
-}
+};
 
 var traverseDepthFirst = function( root, data, options, level, callback ){
 
@@ -91,14 +89,14 @@ var traverseDepthFirst = function( root, data, options, level, callback ){
   });
 
 
-}
+};
 
 var props = function( obj ){
   return Object.keys( obj ).reduce(function(m,a){
     m.push( [ a, obj[ a ] ] );
     return m;
   }, []);
-}
+};
 
 var makeNode = function( id, params ){
 
@@ -116,8 +114,8 @@ var makeNode = function( id, params ){
 
     set.push( s );
     return set;
-  }
-}
+  };
+};
 
 var setChildNodes = function( parentId, cids, side, branchName ){
 
@@ -126,7 +124,7 @@ var setChildNodes = function( parentId, cids, side, branchName ){
     side = side || "a";
     branchName = branchName || "children-mmap";
 
-    var node = find( set, function(e){return e._id === parentId});
+    var node = find( set, function(e){return e._id === parentId;});
 
     if( node ){
 
@@ -136,7 +134,7 @@ var setChildNodes = function( parentId, cids, side, branchName ){
 
       cids.forEach( function(id){
 
-        var node = find( set, function(e){return e._id === id});
+        var node = find( set, function(e){return e._id === id;});
         if( node ){
           node.p = parentId;
         }
@@ -145,8 +143,8 @@ var setChildNodes = function( parentId, cids, side, branchName ){
     }
 
     return set;
-  }
-}
+  };
+};
 
 exports.findIndex = function( data, options ){
 
@@ -159,11 +157,11 @@ exports.findIndex = function( data, options ){
       }
     }
   }
-}
+};
 
 exports.has = function( key, value, prop ){
   return prop.some( function(p){ return (p[0] === key && p[1] === value); });
-}
+};
 
 exports.childNodes = childNodes;
 

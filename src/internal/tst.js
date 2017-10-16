@@ -1,4 +1,8 @@
 const nsf = require('./nsf.js');
+const c = require('./tst-checks.js');
+// easy access exports functions locally 
+let e = exports;
+export default exports;
 
 /** ===== This represents a "Transformative State Tree" =====
  * These functions are mostly pure. They transform the tree based on state transitions
@@ -8,91 +12,89 @@ const nsf = require('./nsf.js');
  * When all siblings are done, the final computed value gets returned to parent,
  *  which uses it for its own computation.  */
 
-
 /** @TODO write up
  * @sig DSNode a => a -> b -> a -> c -> d -> e  */
-const traverseDepthPure = (root, data, fromParent, prep_call, compute_call) => {
-    const chs = nsf.childNodes(root, data);
-    return chs.reduce( function(siblings_computed, node, i){
-        return prepTraverseCompute(node, data, siblings_computed, fromParent, prep_call, compute_call);
-    }, null);
+exports.traverseDepthPure = (root, data, fromParent, prep_call, compute_call) => {
+  const chs = nsf.childNodes(root, data);
+  return chs.reduce( function(siblings_computed, node, i){
+    return e.prepTraverseCompute(node, data, siblings_computed, fromParent, prep_call, compute_call);
+  }, null);
 };
 
-const prepTraverseCompute = function(node, data, siblings_computed, fromParent, prep_call, compute_call){
-    const prepRes = prep_call(node, fromParent);
-    if(prepRes === fromParent)
-        throw new Error("Do not mutate fromParent inside of 'prep_call' and create " +
-                        "a new object instead. Otherwise parent's next state won't " +
-                        "be transitioned properly");
-
-    const children_computed = traverseDepthPure( node, data, prepRes, prep_call, compute_call );
-
-    return compute_call(node, fromParent, prepRes, siblings_computed, children_computed);
-}
+exports.prepTraverseCompute = (node, data, siblings_computed, fromParent, prep_call, compute_call) => {
+  const prepRes = prep_call(node, fromParent);
+  c.prepResEQfromParent(prepRes, fromParent);
+  
+  const children_computed = e.traverseDepthPure( node, data, prepRes, prep_call, compute_call );
+  
+  return compute_call(node, fromParent, prepRes, siblings_computed, children_computed);
+};
 
 // Pure Depth First Traversal with Transformative Parse Tree
-exports.traversePure = function(data, prep_call, compute_call ){
-    //var level = 0;
-    if( !prep_call || !compute_call ) { return false}
-    if( !Array.isArray( data ) ) { node_call("Array expected"); return false};
-
-    return prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
-}
+exports.traversePure = (data, prep_call, compute_call ) => {
+  if( !prep_call || !compute_call )
+    return false;
+  if( !Array.isArray( data ) )
+    throw "Array expected";
+  
+  return e.prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
+};
 
 exports.stateMachine = function stateMachine(states, nodeType) {
-    if (!Array.isArray(states)) throw new Error("'states' should be an Array of [currentState, nodeType, nextState] items");
-    if (!(typeof nodeType === 'function')) throw new Error("'nodeType' should be a function");
-
-    return {
-        states: states,
-        nodeType: nodeType,
-
-        next : function(current_state, node) {
-            if (!(typeof current_state === 'string'))
-                throw new Error("'current_state' should be a string");
-
-            var node_type = nodeType(current_state, node);
-
-            var next_state = states.find(function (el) {
-                return el[0] === current_state && el[1] === node_type;
-            });
-
-            if (!next_state)
-                throw new Error("There is no state for 'current_state' : " +
-                                current_state + " 'and node_type' : " + node_type);
-
-            return next_state[2];
-        }
-    };
+  if (!Array.isArray(states)) throw new Error("'states' should be an Array of [currentState, nodeType, nextState] items");
+  if (!(typeof nodeType === 'function')) throw new Error("'nodeType' should be a function");
+  
+  return {
+    states: states,
+    nodeType: nodeType, 
+    next : function(current_state, node) {
+      if (!(typeof current_state === 'string'))
+        throw new Error("'current_state' should be a string");
+      
+      var node_type = nodeType(current_state, node);
+      
+      var next_state = states.find(function (el) {
+        return el[0] === current_state && el[1] === node_type;
+      });
+      
+      if (!next_state)
+        throw new Error("There is no state for 'current_state' : " +
+                        current_state + " 'and node_type' : " + node_type);
+      
+      return next_state[2];
+    }
+  };
 };
 /** Make sure that the object 'obj' passed is instantiated and it has all
     elements specified in the array 'arr' and that the elements are set to
     preset or empty string if preset is undefined */
 exports.ensureAll = function(obj, arr, preset){
-    obj = obj || {};
-    return arr.reduce((o, str) => {
-        if(!preset)
-            o[str] = o[str] || '';
-        else
-            o[str] = o[str] || preset;
-
-        return o;
-    }, obj);
+  obj = obj || {};
+  return arr.reduce((o, str) => {
+    if(!preset)
+      o[str] = o[str] || '';
+    else
+      o[str] = o[str] || preset;
+    
+    return o;
+  }, obj);
 };
 
 exports.mmapToMap = function(data){
-    var m = new Map();
-    if( Array.isArray( data ) ){
-        for(var i = 0; i < data.length; i++ ){
-            m.set(data[i]._id, data[i])
-        }
-    }else throw new Error("An mmap is always an Array")
-    return m
-}
+  var m = new Map();
+  
+  if( Array.isArray( data ) ){
+    for(var i = 0; i < data.length; i++ ){
+      m.set(data[i]._id, data[i]);
+    }
+  }else
+    throw new Error("An mmap is always an Array");
+  return m;
+};
 
 exports.fastFind = function( data, nodeId ){
-    if(data instanceof Map)
-        return data.get(nodeId)
-    else throw new Error("The func fastFind only expects a Map. Please use mmapToMap" +
-                         "to convert to Map first and keep the data locally");
-}
+  if(data instanceof Map)
+    return data.get(nodeId);
+  else throw new Error("The func fastFind only expects a Map. Please use mmapToMap" +
+                       "to convert to Map first and keep the data locally");
+};

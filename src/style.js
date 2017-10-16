@@ -1,6 +1,6 @@
 import _kot from 'internal/_kot';
 
- /**
+/**
   * 
   * Given a section 'styles' in the language definition, a divsenseTree,  and a node,
   *  return the right properties to be added to the node.
