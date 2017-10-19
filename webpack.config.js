@@ -15,13 +15,18 @@ const config = {
     libraryTarget: 'umd',
     umdNamedDefine: true
   },
+  externals: {
+    ramda: 'ramda'
+  },
   module: {
     loaders: [
       {
         enforce: "pre",
         test: /(\.js)$/,
         loader: "eslint-loader",
-        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, "src")
+        ],
         options: {
           quiet:true
           //useESlintrc:false,
@@ -31,7 +36,7 @@ const config = {
     ]
   },
   resolve: {
-    modules: ["src"],
+    modules: ["src", "node_modules"],
     extensions: ['.js']
   }
 };

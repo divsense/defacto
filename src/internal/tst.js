@@ -1,8 +1,7 @@
-const nsf = require('./nsf.js');
-const c = require('./tst-checks.js');
-// easy access exports functions locally 
-let e = exports;
-export default exports;
+import * as nsf from './nsf.js';
+import * as c from './tst-checks.js';
+
+//export default exports;
 
 /** ===== This represents a "Transformative State Tree" =====
  * These functions are mostly pure. They transform the tree based on state transitions
@@ -14,33 +13,33 @@ export default exports;
 
 /** @TODO write up
  * @sig DSNode a => a -> b -> a -> c -> d -> e  */
-exports.traverseDepthPure = (root, data, fromParent, prep_call, compute_call) => {
+export const traverseDepthPure = (root, data, fromParent, prep_call, compute_call) => {
   const chs = nsf.childNodes(root, data);
   return chs.reduce( function(siblings_computed, node, i){
-    return e.prepTraverseCompute(node, data, siblings_computed, fromParent, prep_call, compute_call);
+    return prepTraverseCompute(node, data, siblings_computed, fromParent, prep_call, compute_call);
   }, null);
 };
 
-exports.prepTraverseCompute = (node, data, siblings_computed, fromParent, prep_call, compute_call) => {
+export const prepTraverseCompute = (node, data, siblings_computed, fromParent, prep_call, compute_call) => {
   const prepRes = prep_call(node, fromParent);
   c.prepResEQfromParent(prepRes, fromParent);
   
-  const children_computed = e.traverseDepthPure( node, data, prepRes, prep_call, compute_call );
+  const children_computed = traverseDepthPure( node, data, prepRes, prep_call, compute_call );
   
   return compute_call(node, fromParent, prepRes, siblings_computed, children_computed);
 };
 
 // Pure Depth First Traversal with Transformative Parse Tree
-exports.traversePure = (data, prep_call, compute_call ) => {
+export const traversePure = (data, prep_call, compute_call ) => {
   if( !prep_call || !compute_call )
     return false;
   if( !Array.isArray( data ) )
     throw "Array expected";
   
-  return e.prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
+  return prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
 };
 
-exports.stateMachine = function stateMachine(states, nodeType) {
+export const stateMachine = function stateMachine(states, nodeType) {
   if (!Array.isArray(states)) throw new Error("'states' should be an Array of [currentState, nodeType, nextState] items");
   if (!(typeof nodeType === 'function')) throw new Error("'nodeType' should be a function");
   
@@ -68,7 +67,7 @@ exports.stateMachine = function stateMachine(states, nodeType) {
 /** Make sure that the object 'obj' passed is instantiated and it has all
     elements specified in the array 'arr' and that the elements are set to
     preset or empty string if preset is undefined */
-exports.ensureAll = function(obj, arr, preset){
+export const ensureAll = function(obj, arr, preset){
   obj = obj || {};
   return arr.reduce((o, str) => {
     if(!preset)
@@ -80,7 +79,7 @@ exports.ensureAll = function(obj, arr, preset){
   }, obj);
 };
 
-exports.mmapToMap = function(data){
+export const mmapToMap = function(data){
   var m = new Map();
   
   if( Array.isArray( data ) ){
@@ -92,7 +91,7 @@ exports.mmapToMap = function(data){
   return m;
 };
 
-exports.fastFind = function( data, nodeId ){
+export const fastFind = function( data, nodeId ){
   if(data instanceof Map)
     return data.get(nodeId);
   else throw new Error("The func fastFind only expects a Map. Please use mmapToMap" +

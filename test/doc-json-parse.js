@@ -1,7 +1,6 @@
 
-const nsf = require('../lib/defacto.js/');
-const tst = require('../src/internal/tst.js');
-const compose = require('lodash.compose');
+const nsf = require('../lib/defactoInternal.js');
+const tst = require('../src/internal/tst.js').tst;
 const parser = require('./parser-json.js');
 
 const doc_html_src = compose(

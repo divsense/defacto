@@ -1,7 +1,9 @@
 {
   "author": "haknick <info@divsense.com> (divsense.com)",
   "contributors": [
-    {"name": "haknick"}
+    {
+      "name": "haknick"
+    }
   ],
   "name": "defacto",
   "description": "Actors language definitions for Divsense",
@@ -17,15 +19,13 @@
     "test": "ava test"
   },
   "dependencies": {
-      "ramda": "~0.23.0",
-      "lodash.compose": "^2.4.1",
-      "lodash.find": "^2.4.1"
+    "ramda": "~0.25.0"
   },
   "devDependencies": {
     "eslint": "4.9.0",
     "eslint-loader": "1.7.1",
     "ava": "0.19.1",
     "jsdoc": "^3.4.3",
-    "webpack": "2.6.0"
+    "webpack": "3.8.1"
   }
 }

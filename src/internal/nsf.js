@@ -1,8 +1,7 @@
 //
 // Divsense Nodes Storage Format
 //
-const find = require("lodash.find");
-
+const R = require('ramda');
 
 var BRANCH_CLASS = 0;
 var BRANCH_NODES = 1;
@@ -124,7 +123,7 @@ var setChildNodes = function( parentId, cids, side, branchName ){
     side = side || "a";
     branchName = branchName || "children-mmap";
 
-    var node = find( set, function(e){return e._id === parentId;});
+    var node = R.find(function(e){return e._id === parentId;}, set);
 
     if( node ){
 
@@ -134,7 +133,7 @@ var setChildNodes = function( parentId, cids, side, branchName ){
 
       cids.forEach( function(id){
 
-        var node = find( set, function(e){return e._id === id;});
+        var node = R.find(function(e){return e._id === id;}, set);
         if( node ){
           node.p = parentId;
         }
