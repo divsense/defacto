@@ -8,5 +8,11 @@
  * 
  */
 
-//export {default as nsf} from './nsf';
-export {default as tst} from './tst';
+import * as nsf from './nsf';
+export {nsf as nsf};
+
+import * as tst from './tst';
+export {tst as tst};
+
+import * as tstChecks from './tst-checks';
+export {tstChecks as tstChecks};

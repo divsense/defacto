@@ -1,3 +1,5 @@
+/* @flow */
+
 import * as nsf from './nsf.js';
 import * as c from './tst-checks.js';
 

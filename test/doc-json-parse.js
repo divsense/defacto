@@ -1,6 +1,7 @@
 
-const nsf = require('../lib/defactoInternal.js');
-const tst = require('../src/internal/tst.js').tst;
+const nsf = require('../lib/defactoInternal.js').nsf;
+const tst = require('../lib/defactoInternal.js').tst;
+const compose = require('ramda').compose;
 const parser = require('./parser-json.js');
 
 const doc_html_src = compose(

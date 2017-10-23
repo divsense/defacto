@@ -22,9 +22,12 @@
     "ramda": "~0.25.0"
   },
   "devDependencies": {
+    "ava": "0.19.1",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-flow": "^6.23.0",
     "eslint": "4.9.0",
     "eslint-loader": "1.7.1",
-    "ava": "0.19.1",
     "jsdoc": "^3.4.3",
     "webpack": "3.8.1"
   }
