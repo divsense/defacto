@@ -32,7 +32,7 @@ export const prepTraverseCompute = (node, data, siblings_computed, fromParent, p
 };
 
 // Pure Depth First Traversal with Transformative Parse Tree
-export const traversePure = (data, prep_call, compute_call ) => {
+export const traversePure = (data: Array, prep_call, compute_call ) => {
   if( !prep_call || !compute_call )
     return false;
   if( !Array.isArray( data ) )
