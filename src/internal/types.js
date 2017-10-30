@@ -12,7 +12,7 @@ export type dnode = {
   Props: Array<Prop>
 };
 
-
+export type dmodel = Array<dnode>;
 
 
 
