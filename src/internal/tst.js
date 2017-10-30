@@ -2,6 +2,7 @@
 
 import * as nsf from './nsf.js';
 import * as c from './tst-checks.js';
+/*:: import type dnode from './types.js'; */
 
 //export default exports;
 
@@ -15,7 +16,8 @@ import * as c from './tst-checks.js';
 
 /** @TODO write up
  * @sig DSNode a => a -> b -> a -> c -> d -> e  */
-export const traverseDepthPure = (root, data, fromParent, prep_call, compute_call) => {
+export const traverseDepthPure = (root /*: dnode */, data /*: dnode */,
+                                  fromParent, prep_call, compute_call) => {
   const chs = nsf.childNodes(root, data);
   return chs.reduce( function(siblings_computed, node, i){
     return prepTraverseCompute(node, data, siblings_computed, fromParent, prep_call, compute_call);
@@ -32,11 +34,11 @@ export const prepTraverseCompute = (node, data, siblings_computed, fromParent, p
 };
 
 // Pure Depth First Traversal with Transformative Parse Tree
-export const traversePure = (data: Array, prep_call, compute_call ) => {
+export const traversePure = (data /*: Array<number> */,
+                             prep_call /*: Function */,
+                             compute_call /*: Function */ ) => {
   if( !prep_call || !compute_call )
     return false;
-  if( !Array.isArray( data ) )
-    throw "Array expected";
   
   return prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
 };

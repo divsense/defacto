@@ -20,28 +20,28 @@ const config = {
   },
   module: {
     loaders: [
-        {
-            test: /(\.js)$/,
-            loader: "babel-loader",
-            exclude: /node_modules/,
-            options: {
-                presets: ['flow']
-            }
-        },
-        {
-            //enforce: "pre",
-            test: /(\.js)$/,
-            loader: "eslint-loader",
-            include: [
-                path.resolve(__dirname, "src"),
-                path.resolve(__dirname, "src/internal")
-            ],
-            options: {
-                quiet:true
-                //useESlintrc:false,
-                //rules: { indent: ['error', 2] }
-            }
+      {
+        enforce: 'pre',
+        test: /(\.js)$/,
+        loader: "babel-loader",
+        exclude: /node_modules/,
+        options: {
+          presets: ['flow']
         }
+      },
+      {
+        test: /(\.js)$/,
+        loader: "eslint-loader",
+        include: [
+          path.resolve(__dirname, "src"),
+          path.resolve(__dirname, "src/internal")
+        ],
+        options: {
+          quiet:true
+          //useESlintrc:false,
+          //rules: { indent: ['error', 2] }
+        }
+      }
     ]
   },
   resolve: {
