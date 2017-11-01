@@ -121,7 +121,7 @@ exports.parse = function(tst, src){
       
     // The callback's return value will be used to be passed along to the node's children, so information that the
     // children need about this node, should be returned from the callback function
-    var out = tst.traversePure(src, prep_call, compute_call);
+    var out = tst.traversePure(src, prep_call, compute_call); // 
 
     return out.items[0];
 

@@ -29,6 +29,7 @@
     "eslint": "4.9.0",
     "eslint-loader": "1.7.1",
     "jsdoc": "^3.4.3",
-    "webpack": "3.8.1"
+    "webpack": "3.8.1",
+    "flow-bin": "latest"
   }
 }

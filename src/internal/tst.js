@@ -16,11 +16,12 @@ import * as c from './tst-checks.js';
 
 /** @TODO write up
  * @sig DSNode a => a -> b -> a -> c -> d -> e  */
-export const traverseDepthPure = (root /*: dnode */, data /*: dnode */,
-                                  fromParent, prep_call, compute_call) => {
+export const traverseDepthPure = (root /*: dnode */, data /*: dmodel */,
+                                  fromParent /*: dnode */, prep_call, compute_call) => {
   const chs = nsf.childNodes(root, data);
   return chs.reduce( function(siblings_computed, node, i){
-    return prepTraverseCompute(node, data, siblings_computed, fromParent, prep_call, compute_call);
+    return prepTraverseCompute(node, data, siblings_computed,
+                               fromParent, prep_call, compute_call);
   }, null);
 };
 
