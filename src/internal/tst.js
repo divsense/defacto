@@ -2,13 +2,14 @@
 
 import * as nsf from './nsf.js';
 import * as c from './tst-checks.js';
-/*:: import type dnode from './types.js'; */
+/*:: import type {dnode, dmodel, dstate, dstates, dprepRes, dprepCall, dcomputecall} 
+  from './types.js'; */
 
 //export default exports;
 
 /** ===== This represents a "Transformative State Tree" =====
  * These functions are mostly pure. They transform the tree based on state transitions
- *  without storing state but only passing it forward
+ *  WITHOUT STORING STATE, but only passing it forward
  * Parents can pass data and their state defined in prep_call to children.
  * Siblings compute based on state and can pass computed values to the next sibling via compute_call.
  * When all siblings are done, the final computed value gets returned to parent,
@@ -16,23 +17,34 @@ import * as c from './tst-checks.js';
 
 /** @TODO write up
  * @sig DSNode a => a -> b -> a -> c -> d -> e  */
-export const traverseDepthPure = (root /*: dnode */, data /*: dmodel */,
-                                  fromParent /*: dnode */, prep_call, compute_call) => {
-  const chs = nsf.childNodes(root, data);
-  return chs.reduce( function(siblings_computed, node, i){
-    return prepTraverseCompute(node, data, siblings_computed,
-                               fromParent, prep_call, compute_call);
-  }, null);
-};
+export const traverseDepthPure = ( root /*: dnode */,
+                                   data /*: dmodel */,
+                                   fromParent /*: dnode */,
+                                   prep_call /*: dprepCall */,
+                                   compute_call /*: dcomputeCall */
+                                 ) /*: string */ => 
+  {
+    const chs = nsf.childNodes(root, data);
+    return chs.reduce( (siblings_computed, node) => prepTraverseCompute(
+      node, data, siblings_computed,
+      fromParent, prep_call, compute_call), null);
+  };
 
-export const prepTraverseCompute = (node, data, siblings_computed, fromParent, prep_call, compute_call) => {
-  const prepRes = prep_call(node, fromParent);
-  c.prepResEQfromParent(prepRes, fromParent);
-  
-  const children_computed = traverseDepthPure( node, data, prepRes, prep_call, compute_call );
-  
-  return compute_call(node, fromParent, prepRes, siblings_computed, children_computed);
-};
+/** 
+ * @sig dnode n => n, */
+export const prepTraverseCompute = ( node, data,
+                                     siblings_computed,
+                                     fromParent, prep_call,
+                                     compute_call
+                                   ) /*: dprepRes */ => 
+  {
+    const prepRes = prep_call(node, fromParent);
+    c.prepResEQfromParent(prepRes, fromParent);
+    
+    const children_computed = traverseDepthPure( node, data, prepRes, prep_call, compute_call );
+    
+    return compute_call(node, fromParent, prepRes, siblings_computed, children_computed);
+  };
 
 // Pure Depth First Traversal with Transformative Parse Tree
 export const traversePure = (data /*: Array<number> */,

@@ -53,7 +53,7 @@ exports.parse = function(tst, src){
 
     let computations = {
         '['(node, parent, prep, sib, ch){
-            // children items are already an array. Just push to siblings items
+          // children items are already an array. Just push to siblings items
             sib.items.push(ch.items)
             return sib
         },            
@@ -113,15 +113,17 @@ exports.parse = function(tst, src){
     // this gets called after the children of this node finally have a computed value which was passed to this function
     let compute_call = (node, fromParent, fromPrep, siblings_computed, children_computed) => {
         // only items array is really needed and each parent will decide how to reduce it
-        let siblings = tst.ensureAll(siblings_computed, ['items'], []);
-        let children = tst.ensureAll(children_computed, ['items'], []);
+      let siblings = tst.ensureAll(siblings_computed, ['items'], []);
+      let children = tst.ensureAll(children_computed, ['items'], []);
 
-        return computations[fromPrep.state](node, fromParent, fromPrep, siblings, children)
+      const kot = computations[fromPrep.state](node, fromParent, fromPrep, siblings, children);
+      console.log(kot);
+      return kot;
     };
       
     // The callback's return value will be used to be passed along to the node's children, so information that the
     // children need about this node, should be returned from the callback function
-    var out = tst.traversePure(src, prep_call, compute_call); // 
+    var out = tst.traversePure(src, prep_call, compute_call);
 
     return out.items[0];
 

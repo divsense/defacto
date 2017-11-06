@@ -12,10 +12,21 @@ export type dnode = {
   Props: Array<Prop>
 };
 
+// Map dmodel NID dnode
 export type dmodel = {
-  NID: string,
-  Node: dnode
+  string, dnode
 };
+
+export type dstate = Array<string> ;
+
+export type dstates = Array<dstate> ;
+
+export type dprepRes = {state: dstate, node: dnode}
+
+export type dprepCall = (dnode, dnode) =>  dprepRes;
+
+export type dcomputeCall = (dnode, dnode, ) => {state: dstate, node: dnode} ;
+
 
 
 //*/
