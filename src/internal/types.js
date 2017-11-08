@@ -25,7 +25,9 @@ export type dprepRes = {state: dstate, node: dnode}
 
 export type dprepCall = (dnode, dnode) =>  dprepRes;
 
-export type dcomputeCall = (dnode, dnode, ) => {state: dstate, node: dnode} ;
+export type dcomputeCall = ( node: dnode, fromParent: dnode, fromPrep: dprepCall, 
+                             siblings_computed: {}, children_computed {}) 
+  => {state: dstate, node: dnode} ;
 
 
 
