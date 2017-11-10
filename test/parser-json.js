@@ -116,11 +116,7 @@ exports.parse = function(tst, src){
       let siblings = tst.ensureAll(siblings_computed, ['items'], []);
       let children = tst.ensureAll(children_computed, ['items'], []);
 
-      console.log(siblings);
-
-      const kot = computations[fromPrep.state](node, fromParent, fromPrep, siblings, children);
-      //console.log(kot);
-      return kot;
+     return computations[fromPrep.state](node, fromParent, fromPrep, siblings, children);
     };
       
     // The callback's return value will be used to be passed along to the node's children, so information that the

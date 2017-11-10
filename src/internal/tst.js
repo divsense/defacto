@@ -2,16 +2,19 @@
 
 import * as nsf from './nsf.js';
 import * as c from './tst-checks.js';
-/*:: import type {dnode, dmodel, dstate, dstates, dprepRes, dprepCall, dcomputecall} 
+
+/*:: import type { dnode, dmodel, dstate, dstates, dprepRes, 
+                   dprepCall, dcomputecall } 
   from './types.js'; */
 
 //export default exports;
 
 /** ===== This represents a "Transformative State Tree" =====
- * These functions are mostly pure. They transform the tree based on state transitions
- *  WITHOUT STORING STATE, but only passing it forward
+ * These functions are mostly pure. They transform the tree based on state 
+ * transitions WITHOUT STORING STATE, but only passing it forward
  * Parents can pass data and their state defined in prep_call to children.
- * Siblings compute based on state and can pass computed values to the next sibling via compute_call.
+ * Siblings compute based on state and can pass computed values to the next 
+ * sibling via compute_call.
  * When all siblings are done, the final computed value gets returned to parent,
  *  which uses it for its own computation.  */
 
@@ -22,7 +25,7 @@ export const traverseDepthPure = ( root /*: dnode */,
                                    fromParent /*: dnode */,
                                    prep_call /*: dprepCall */,
                                    compute_call /*: dcomputeCall */
-                                 ) /*: string */ => 
+                                 ) /*: ?{} */ => 
   {
     const chs = nsf.childNodes(root, data);
     return chs.reduce( (siblings_computed, node) => prepTraverseCompute(
@@ -32,10 +35,12 @@ export const traverseDepthPure = ( root /*: dnode */,
 
 /** 
  * @sig dnode n => n, */
-export const prepTraverseCompute = ( node, data,
-                                     siblings_computed,
-                                     fromParent, prep_call,
-                                     compute_call
+export const prepTraverseCompute = ( node /*: dnode */,
+                                     data /*: dmodel */,
+                                     siblings_computed /*: {} */,
+                                     fromParent /*: dnode */,
+                                     prep_call /*: dprepCall */,
+                                     compute_call /*: dcomputeCall */
                                    ) /*: dprepRes */ => 
   {
     const prepRes = prep_call(node, fromParent);
@@ -48,39 +53,42 @@ export const prepTraverseCompute = ( node, data,
 
 // Pure Depth First Traversal with Transformative Parse Tree
 export const traversePure = (data /*: Array<number> */,
-                             prep_call /*: Function */,
-                             compute_call /*: Function */ ) => {
-  if( !prep_call || !compute_call )
-    return false;
-  
-  return prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
-};
-
-export const stateMachine = function stateMachine(states, nodeType) {
-  if (!Array.isArray(states)) throw new Error("'states' should be an Array of [currentState, nodeType, nextState] items");
-  if (!(typeof nodeType === 'function')) throw new Error("'nodeType' should be a function");
-  
-  return {
-    states: states,
-    nodeType: nodeType, 
-    next : function(current_state, node) {
-      if (!(typeof current_state === 'string'))
-        throw new Error("'current_state' should be a string");
-      
-      var node_type = nodeType(current_state, node);
-      
-      var next_state = states.find(function (el) {
-        return el[0] === current_state && el[1] === node_type;
-      });
-      
-      if (!next_state)
-        throw new Error("There is no state for 'current_state' : " +
-                        current_state + " 'and node_type' : " + node_type);
-      
-      return next_state[2];
-    }
+                             prep_call /*: dprepCall */,
+                             compute_call /*: dcomputeCall */
+                            ) /*: dprepRes */ =>
+  {
+    if( !prep_call || !compute_call )
+      return false;
+    
+    return prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
   };
-};
+
+export const stateMachine = ( states /*: dstates */,
+                              nodeType /*: dnodeType */
+                            ) /*: {} */ =>
+  {
+    return {
+      states: states,
+      nodeType: nodeType, 
+      next : function(current_state, node) {
+        if (!(typeof current_state === 'string'))
+          throw new Error("'current_state' should be a string");
+        
+        var node_type = nodeType(current_state, node);
+        
+        var next_state = states.find(function (el) {
+          return el[0] === current_state && el[1] === node_type;
+        });
+        
+        if (!next_state)
+          throw new Error("There is no state for 'current_state' : " +
+                          current_state + " 'and node_type' : " + node_type);
+        
+        return next_state[2];
+      }
+    };
+  };
+
 /** Make sure that the object 'obj' passed is instantiated and it has all
     elements specified in the array 'arr' and that the elements are set to
     preset or empty string if preset is undefined */
