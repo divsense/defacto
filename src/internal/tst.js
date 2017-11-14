@@ -4,7 +4,7 @@ import * as nsf from './nsf.js';
 import * as c from './tst-checks.js';
 
 /*:: import type { dnode, dmodel, dstate, dstates, dprepRes, 
-                   dprepCall, dcomputecall } 
+                   dprepCall, dcomputeCall, dnodeType } 
   from './types.js'; */
 
 //export default exports;
@@ -22,7 +22,7 @@ import * as c from './tst-checks.js';
  * @sig DSNode a => a -> b -> a -> c -> d -> e  */
 export const traverseDepthPure = ( root /*: dnode */,
                                    data /*: dmodel */,
-                                   fromParent /*: dnode */,
+                                   fromParent /*: dprepRes */,
                                    prep_call /*: dprepCall */,
                                    compute_call /*: dcomputeCall */
                                  ) /*: ?{} */ => 
@@ -38,7 +38,7 @@ export const traverseDepthPure = ( root /*: dnode */,
 export const prepTraverseCompute = ( node /*: dnode */,
                                      data /*: dmodel */,
                                      siblings_computed /*: {} */,
-                                     fromParent /*: dnode */,
+                                     fromParent /*: dprepRes */,
                                      prep_call /*: dprepCall */,
                                      compute_call /*: dcomputeCall */
                                    ) /*: dprepRes */ => 
@@ -46,20 +46,19 @@ export const prepTraverseCompute = ( node /*: dnode */,
     const prepRes = prep_call(node, fromParent);
     c.prepResEQfromParent(prepRes, fromParent);
     
-    const children_computed = traverseDepthPure( node, data, prepRes, prep_call, compute_call );
+    const children_computed = traverseDepthPure( node, data, prepRes,
+                                                 prep_call, compute_call );
     
-    return compute_call(node, fromParent, prepRes, siblings_computed, children_computed);
+    return compute_call(node, fromParent, prepRes,
+                        siblings_computed, children_computed);
   };
 
 // Pure Depth First Traversal with Transformative Parse Tree
-export const traversePure = (data /*: Array<number> */,
+export const traversePure = (data /*: dmodel */,
                              prep_call /*: dprepCall */,
                              compute_call /*: dcomputeCall */
                             ) /*: dprepRes */ =>
-  {
-    if( !prep_call || !compute_call )
-      return false;
-    
+  { 
     return prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
   };
 
@@ -70,28 +69,23 @@ export const stateMachine = ( states /*: dstates */,
     return {
       states: states,
       nodeType: nodeType, 
-      next : function(current_state, node) {
-        if (!(typeof current_state === 'string'))
-          throw new Error("'current_state' should be a string");
+      next : function(current_state /*: string */, node /*: dnode */) {
+        const node_type = nodeType(current_state, node);
         
-        var node_type = nodeType(current_state, node);
-        
-        var next_state = states.find(function (el) {
+        const next_state = states.find(function (el) {
           return el[0] === current_state && el[1] === node_type;
         });
-        
-        if (!next_state)
-          throw new Error("There is no state for 'current_state' : " +
-                          current_state + " 'and node_type' : " + node_type);
-        
+
+        c.assertNextState(current_state, next_state, node_type);        
         return next_state[2];
       }
     };
   };
 
-/** Make sure that the object 'obj' passed is instantiated and it has all
-    elements specified in the array 'arr' and that the elements are set to
-    preset or empty string if preset is undefined */
+/** @TODO REFACTOR THIS!!!. 
+ * Make sure that the object 'obj' passed is instantiated and it has all
+ * elements specified in the array 'arr' and that the elements are set to
+ * preset or empty string if preset is undefined */
 export const ensureAll = function(obj, arr, preset){
   obj = obj || {};
   return arr.reduce((o, str) => {

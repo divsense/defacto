@@ -7,3 +7,9 @@ exports.prepResEQfromParent = (p, f) => {
                         "a new object instead. Otherwise parent's next state won't " +
                         "be transitioned properly");
 };
+
+exports.assertNextState = (cs, ns, nt) => {
+  if(!ns) throw new Error("There is no state for 'current_state' : " +
+                          cs + " 'and node_type' : " + nt);
+};
+
