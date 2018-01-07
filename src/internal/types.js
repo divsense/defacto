@@ -23,7 +23,7 @@ export type dstate = Array<string> ;
 
 export type dstates = Array<dstate> ;
 
-export type dprepRes = {state: dstate, node: dnode}
+export type dprepRes = {state: dstate, node: dnode} | {} ;
 
 export type dprepCall = (dnode, dprepRes) =>  dprepRes ;
 

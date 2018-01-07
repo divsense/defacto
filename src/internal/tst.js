@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as nsf from './nsf.js';
-import * as c from './tst-checks.js';
+import * as check from './tst-checks.js';
 
 /*:: import type { dnode, dmodel, dstate, dstates, dprepRes, 
                    dprepCall, dcomputeCall, dnodeType } 
@@ -44,7 +44,7 @@ export const prepTraverseCompute = ( node /*: dnode */,
                                    ) /*: dprepRes */ => 
   {
     const prepRes = prep_call(node, fromParent);
-    c.prepResEQfromParent(prepRes, fromParent);
+    check.prepResEQfromParent(prepRes, fromParent); // 
     
     const children_computed = traverseDepthPure( node, data, prepRes,
                                                  prep_call, compute_call );
@@ -62,6 +62,25 @@ export const traversePure = (data /*: dmodel */,
     return prepTraverseCompute(data[0], data, {}, {}, prep_call, compute_call);
   };
 
+/** 
+ * 
+ */
+export const nextCall = (states /*: dstates */,
+                         nodeType /*: dnodeType */
+                        )  => (current_state /*: string */,
+                               node /*: dnode */
+                              ) /*: string */ => 
+  {
+    const node_type = nodeType(current_state, node);
+    
+    const next_state = states.find(function (el) {
+      return el[0] === current_state && el[1] === node_type;
+    });
+    
+    check.assertNextState(current_state, next_state, node_type);        
+    return next_state[2];
+  };
+
 export const stateMachine = ( states /*: dstates */,
                               nodeType /*: dnodeType */
                             ) /*: {} */ =>
@@ -69,16 +88,7 @@ export const stateMachine = ( states /*: dstates */,
     return {
       states: states,
       nodeType: nodeType, 
-      next : function(current_state /*: string */, node /*: dnode */) {
-        const node_type = nodeType(current_state, node);
-        
-        const next_state = states.find(function (el) {
-          return el[0] === current_state && el[1] === node_type;
-        });
-
-        c.assertNextState(current_state, next_state, node_type);        
-        return next_state[2];
-      }
+      next : nextCall(states, nodeType)
     };
   };
 
