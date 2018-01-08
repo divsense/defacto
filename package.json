@@ -30,6 +30,7 @@
     "eslint-loader": "1.7.1",
     "flow-bin": "^0.63.1",
     "jsdoc": "^3.4.3",
-    "webpack": "3.8.1"
+    "webpack": "3.8.1",
+    "js-yaml": "latest"
   }
 }

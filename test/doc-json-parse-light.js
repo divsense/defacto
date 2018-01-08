@@ -1,10 +1,13 @@
 
 const nsf = require('../lib/defactoInternal.js').nsf;
 const tst = require('../lib/defactoInternal.js').tst;
-const compose = require('ramda').compose;
+const R = require('ramda');
+const compose = R.compose;
+const yml = require('js-yaml');
 const parser = require('./parser-json.js');
+const fs = require('fs');
 
-//*
+/*
 const doc_html_src = compose(
     nsf.setChildNodes("111", ["112", "125"])
     , nsf.setChildNodes("112", ["113", "115"])
@@ -36,9 +39,29 @@ const doc_html_src = compose(
 )();
 //*/
 
-//const composeArgs = 
+const tree = yml.safeLoad(fs.readFileSync('./test/doc-json-parse-light.yml', 'utf8'));
+
+const yml2nsf = (nsfArr, tree) => {
+
+  if( tree === null ) return nsfArr;
+  else if( typeof tree !== 'object' ){
+    nsfArr.push(nsf.makeNode( (nsfArr.count+1).toString(), { t: tree 
+  }
+  else{
+    return R.reduce(() => {
       
-const doc_html_src = compose(...compseArgs);
+    }, nsfArr, argsArr);
+  }
+  
+  console.log(JSON.stringify(composeArgs, null, 2));
+  process.exit();
+  //  const doc_html_src = compose(...compseArgs);
+  
+};
+
+  const doc_html_src = compose(...compseArgs);
+
+  process.exit();
 
 const doc_html_src_ord = doc_html_src.reverse();
 //console.log(JSON.stringify(doc_html_src_ord, null, 2))
