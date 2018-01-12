@@ -1,5 +1,15 @@
 
-const nsf = require('../lib/defactoInternal.js').nsf;
+//const nsf = require('../lib/defactoInternal.js').nsf;
+const nsf = {
+  makeNode: function(key, o){
+    return {k: key, t: o.t};
+  },
+  setChildNodes: function(key, a){
+    console.log(key, a);
+    return {k:key, c:a};
+  }
+};
+
 const tst = require('../lib/defactoInternal.js').tst;
 const R = require('ramda');
 const compose = R.compose;
@@ -39,29 +49,42 @@ const doc_html_src = compose(
 )();
 //*/
 
-const tree = yml.safeLoad(fs.readFileSync('./test/doc-json-parse-light.yml', 'utf8'));
+const tree = yml.safeLoad(fs.readFileSync('./doc-json-parse-light.yml', 'utf8'));
 
-const yml2nsf = (nsfArr, tree) => {
+let quickID = 1; // don't  really care about this being mutable for now
+/** the tree is always what we start with */
+const yml2nsf = (tree) => {
 
-  if( tree === null ) return nsfArr;
+  if( tree === null ) return { nodes: [], childNodes: [], childNodesIDs: [] };
   else if( typeof tree !== 'object' ){
-    nsfArr.push(nsf.makeNode( (nsfArr.count+1).toString(), { t: tree 
+    const keyID = (quickID++).toString();
+    const n = [ nsf.makeNode( keyID, { t: tree.toString(), u: {type:"text"}}) ];
+    return { nodes: n, childNodes: [], childNodesIDs: [] };
   }
   else{
-    return R.reduce(() => {
+    return R.reduce((acc, pair) => {
+      const keyID = (quickID++).toString();
+      const n = R.append(
+        nsf.makeNode( keyID, { t: R.nth(0, pair).toString(), u: {type:"text"}}),
+        acc.nodes
+      );
+
+      const subTree = yml2nsf(R.nth(1, pair));
+      const cn = R.append(nsf.setChildNodes(keyID, subTree.childNodes), acc.cn);
+      const cni = R.append(keyID, acc.childNodesIDs);
       
-    }, nsfArr, argsArr);
+      return { nodes: n, childNodes: cn, childNodesIDs: cni };
+      
+    }, { nodes: [], childNodes: [], childNodesIDs: [] }, R.toPairs(tree));
   }
-  
-  console.log(JSON.stringify(composeArgs, null, 2));
-  process.exit();
-  //  const doc_html_src = compose(...compseArgs);
-  
+  //  const doc_html_src = compose(...compseArgs); 
 };
 
-  const doc_html_src = compose(...compseArgs);
+const composeArgs = yml2nsf(tree);
+console.log(composeArgs);
+process.exit();
 
-  process.exit();
+const doc_html_src = compose(...composeArgs);
 
 const doc_html_src_ord = doc_html_src.reverse();
 //console.log(JSON.stringify(doc_html_src_ord, null, 2))

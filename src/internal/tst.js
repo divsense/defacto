@@ -78,7 +78,7 @@ export const nextCall = (states /*: dstates */,
     });
     
     check.assertNextState(current_state, next_state, node_type);        
-    return next_state[2];
+    return R.nth(2, next_state);
   };
 
 export const stateMachine = ( states /*: dstates */,
