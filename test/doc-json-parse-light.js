@@ -1,14 +1,5 @@
 
-//const nsf = require('../lib/defactoInternal.js').nsf;
-const nsf = {
-  makeNode: function(key, o){
-    return {k: key, t: o.t};
-  },
-  setChildNodes: function(key, a){
-    console.log(key, a);
-    return {k:key, c:a};
-  }
-};
+const nsf = require('../lib/defactoInternal.js').nsf;
 
 const tst = require('../lib/defactoInternal.js').tst;
 const R = require('ramda');
@@ -52,36 +43,44 @@ const doc_html_src = compose(
 const tree = yml.safeLoad(fs.readFileSync('./doc-json-parse-light.yml', 'utf8'));
 
 let quickID = 1; // don't  really care about this being mutable for now
+const newKey = () => (quickID++).toString();
 /** the tree is always what we start with */
 const yml2nsf = (tree) => {
-
-  if( tree === null ) return { nodes: [], childNodes: [], childNodesIDs: [] };
+  if( tree === null ) return { nodes: [], childNodes: [], levelIDs: [] };
   else if( typeof tree !== 'object' ){
-    const keyID = (quickID++).toString();
-    const n = [ nsf.makeNode( keyID, { t: tree.toString(), u: {type:"text"}}) ];
-    return { nodes: n, childNodes: [], childNodesIDs: [] };
+    return { nodes: [newKey(), tree.toString()], childNodes: [], levelIDs: [] };
   }
   else{
     return R.reduce((acc, pair) => {
-      const keyID = (quickID++).toString();
-      const n = R.append(
-        nsf.makeNode( keyID, { t: R.nth(0, pair).toString(), u: {type:"text"}}),
-        acc.nodes
-      );
-
       const subTree = yml2nsf(R.nth(1, pair));
-      const cn = R.append(nsf.setChildNodes(keyID, subTree.childNodes), acc.cn);
-      const cni = R.append(keyID, acc.childNodesIDs);
+
+      const keyID = newKey();
+      const thisLevelNodes = R.append([keyID, R.nth(0, pair)], acc.nodes);
+      const nodes = R.concat(thisLevelNodes, subTree.nodes);
+
+      // don't need to concat these as only used from parent
+      const thisLevelIDs = R.append(keyID, acc.levelIDs);
       
-      return { nodes: n, childNodes: cn, childNodesIDs: cni };
+      const thisLevelChildNodes = (subTree.levelIDs.length > 1) ?
+            R.append([keyID, subTree.levelIDs], acc.childNodes) : [];
+      const childNodes = R.concat(thisLevelChildNodes, subTree.childNodes);      
       
-    }, { nodes: [], childNodes: [], childNodesIDs: [] }, R.toPairs(tree));
+      return { nodes: nodes, childNodes: childNodes, levelIDs: thisLevelIDs };
+      
+    }, { nodes: [], childNodes: [], levelIDs: [] }, R.toPairs(tree));
   }
   //  const doc_html_src = compose(...compseArgs); 
 };
 
-const composeArgs = yml2nsf(tree);
-console.log(composeArgs);
+const nsfReady = (nodes, children) => {console.log(nodes, children)
+  return R.concat(
+    R.map((n) => nsf.makeNode(R.nth(0, n), {t: R.nth(1, n), u: {type:"text"}}), nodes),
+    R.map((c) => nsf.setChildNodes(R.nth(0, c), R.nth(1, c)), children)
+  );
+};
+
+const ar = yml2nsf(tree);
+console.log(JSON.stringify(nsfReady(ar.nodes, ar.childNodes), null, 4));
 process.exit();
 
 const doc_html_src = compose(...composeArgs);
