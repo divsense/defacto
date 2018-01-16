@@ -72,15 +72,18 @@ const yml2nsf = (tree) => {
   //  const doc_html_src = compose(...compseArgs); 
 };
 
-const nsfReady = (nodes, children) => {console.log(nodes, children)
+const nsfReady = (nodes, children) => {
   return R.concat(
     R.map((n) => nsf.makeNode(R.nth(0, n), {t: R.nth(1, n), u: {type:"text"}}), nodes),
     R.map((c) => nsf.setChildNodes(R.nth(0, c), R.nth(1, c)), children)
   );
 };
 
-const ar = yml2nsf(tree);
-console.log(JSON.stringify(nsfReady(ar.nodes, ar.childNodes), null, 4));
+const nsfArrs = yml2nsf(tree);
+console.log( nsf.makeNode("133", { t: "{", u: {type:"text"}}));process.exit();
+const kot = R.map((n) => nsf.makeNode("133", { t: "{", u: {type:"text"}} ), nsfArrs.nodes);
+//const composed = nsfReady(nsfArrs.nodes, nsfArrs.childNodes);
+console.log(JSON.stringify(kot, null, 4));
 process.exit();
 
 const doc_html_src = compose(...composeArgs);
@@ -89,4 +92,4 @@ const doc_html_src_ord = doc_html_src.reverse();
 //console.log(JSON.stringify(doc_html_src_ord, null, 2))
 const json = parser.parse(tst, doc_html_src_ord);
 
-console.log(JSON.stringify(json, null, 4))
+console.log(JSON.stringify(json, null, 4));
