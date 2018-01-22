@@ -2,6 +2,7 @@
 
 import * as nsf from './nsf.js';
 import * as check from './tst-checks.js';
+import * as R from 'ramda';
 
 /*:: import type { dnode, dmodel, dstate, dstates, dprepRes, 
                    dprepCall, dcomputeCall, dnodeType } 

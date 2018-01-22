@@ -162,7 +162,46 @@ exports.has = function( key, value, prop ){
   return prop.some( function(p){ return (p[0] === key && p[1] === value); });
 };
 
-exports.childNodes = childNodes;
+let quickID = 1; // don't  really care about this being mutable for now
+const newKey = () => (quickID++).toString();
+/** the tree is always what we start with */
+const yml2nsf = (tree) => {
+  if( tree === null ) return { nodes: [], childNodes: [], levelIDs: [] };
+  else if( typeof tree !== 'object' ){
+    const keyID = newKey();
+    return { nodes: [ [keyID, tree.toString()] ], childNodes: [], levelIDs: [keyID] };
+  }
+  else{
+    return R.reduce((acc, pair) => {
+      const subTree = yml2nsf(R.nth(1, pair));
 
+      const keyID = newKey();
+      const key = R.nth(0, pair).replace(/ *`[^)]*` */g, "");
+      const thisLevelNodes = R.append([keyID, key], acc.nodes);
+      const nodes = R.concat(thisLevelNodes, subTree.nodes);
+
+      // don't need to concat these as only used from parent
+      const thisLevelIDs = R.append(keyID, acc.levelIDs);
+      
+      const thisLevelChildNodes = (subTree.levelIDs.length > 0) ?
+            R.append([keyID, subTree.levelIDs], acc.childNodes) : [];
+      const childNodes = R.concat(thisLevelChildNodes, subTree.childNodes);      
+      
+      return { nodes: nodes, childNodes: childNodes, levelIDs: thisLevelIDs };
+      
+    }, { nodes: [], childNodes: [], levelIDs: [] }, R.toPairs(tree));
+  }
+};
+
+const nsfReady = (nodes, children) => {
+  return R.concat(
+    R.map((c) => setChildNodes(R.nth(0, c), R.nth(1, c)), children),
+    R.map((n) => makeNode(R.nth(0, n), {t: R.nth(1, n), u: {type:"text"}}), nodes)
+  );
+};
+
+exports.nsfReady = nsfReady;
+exports.yml2nsf = yml2nsf;
+exports.childNodes = childNodes;
 exports.makeNode = makeNode;
 exports.setChildNodes = setChildNodes;
