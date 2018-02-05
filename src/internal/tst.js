@@ -20,13 +20,13 @@ import * as R from 'ramda';
  *  which uses it for its own computation.  */
 
 /** @TODO write up
- * @sig DSNode a => a -> b -> a -> c -> d -> e  */
+ * @sig DSNode a => a -> b -> c -> d -> e -> fe  */
 export const traverseDepthPure = ( root /*: dnode */,
                                    data /*: dmodel */,
                                    fromParent /*: dprepRes */,
                                    prep_call /*: dprepCall */,
                                    compute_call /*: dcomputeCall */
-                                 ) /*: ?{} */ => 
+                                 ) /*: dprepRes */ => 
   {
     const chs = nsf.childNodes(root, data);
     return chs.reduce( (siblings_computed, node) => prepTraverseCompute(
@@ -97,33 +97,24 @@ export const stateMachine = ( states /*: dstates */,
  * Make sure that the object 'obj' passed is instantiated and it has all
  * elements specified in the array 'arr' and that the elements are set to
  * preset or empty string if preset is undefined */
-export const ensureAll = function(obj, arr, preset){
-  obj = obj || {};
-  return arr.reduce((o, str) => {
+export const ensureAll = (obj /*: null | { [string]: mixed } */,
+                          arr /*: Array<string> */,
+                          preset /*: mixed */
+                         ) /*: any */ => {
+  return R.reduce((o, str) => {
     if(!preset)
       o[str] = o[str] || '';
     else
       o[str] = o[str] || preset;
     
     return o;
-  }, obj);
+  }, obj, arr);
 };
 
-export const mmapToMap = function(data){
-  var m = new Map();
-  
-  if( Array.isArray( data ) ){
-    for(var i = 0; i < data.length; i++ ){
-      m.set(data[i]._id, data[i]);
-    }
-  }else
-    throw new Error("An mmap is always an Array");
-  return m;
+export const mmapToMap = function(data /*: mixed */){
+  return new Map(data.map((i) => [i._id, i]));
 };
 
-export const fastFind = function( data, nodeId ){
-  if(data instanceof Map)
+export const fastFind = function(data /*: Map */, nodeId /*: string */ ){
     return data.get(nodeId);
-  else throw new Error("The func fastFind only expects a Map. Please use mmapToMap" +
-                       "to convert to Map first and keep the data locally");
 };

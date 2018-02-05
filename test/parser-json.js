@@ -112,9 +112,13 @@ exports.parse = function(tst, src){
 
     // this gets called after the children of this node finally have a computed value which was passed to this function
     let compute_call = (node, fromParent, fromPrep, siblings_computed, children_computed) => {
-        // only items array is really needed and each parent will decide how to reduce it
+      // only items array is really needed and each parent will decide how to reduce it
+      // console.log("siblings_computed: ", siblings_computed);
+      // console.log("children_computed: ", children_computed);
       let siblings = tst.ensureAll(siblings_computed, ['items'], []);
       let children = tst.ensureAll(children_computed, ['items'], []);
+      // console.log("siblings: ", siblings);
+      // console.log("children: ", children);
 
      return computations[fromPrep.state](node, fromParent, fromPrep, siblings, children);
     };
